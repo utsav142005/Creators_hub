@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up — CreatorHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    #ch-toasts{position:fixed;top:82px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+    .cht{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-radius:14px;min-width:300px;max-width:380px;
+      pointer-events:auto;box-shadow:0 8px 32px rgba(0,0,0,0.13);font-family:"DM Sans",sans-serif;font-size:.87rem;
+      line-height:1.5;cursor:pointer;position:relative;overflow:hidden;border:1px solid transparent;
+      animation:chtIn .36s cubic-bezier(.34,1.56,.64,1) forwards}
+    .cht.out{animation:chtOut .28s ease forwards}
+    @keyframes chtIn{from{opacity:0;transform:translateX(55px) scale(.92)}to{opacity:1;transform:none}}
+    @keyframes chtOut{from{opacity:1;max-height:120px}to{opacity:0;transform:translateX(55px);max-height:0;padding:0;margin:0}}
+    .cht-ico{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;flex-shrink:0}
+    .cht-body{flex:1}.cht-title{font-weight:700;font-size:.87rem;margin-bottom:1px}.cht-msg{font-size:.8rem;opacity:.85}
+    .cht-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 14px 14px;animation:chtBar linear forwards}
+    @keyframes chtBar{from{width:100%}to{width:0}}
+    .cht.success{background:#f0fdf4;border-color:rgba(16,185,129,.22);color:#065f46}
+    .cht.success .cht-ico{background:#d1fae5;color:#10b981}.cht.success .cht-bar{background:#10b981}
+    .cht.error{background:#fff1f2;border-color:rgba(239,68,68,.22);color:#7f1d1d}
+    .cht.error .cht-ico{background:#fee2e2;color:#ef4444}.cht.error .cht-bar{background:#ef4444}
+    .cht.info{background:#eff6ff;border-color:rgba(59,130,246,.22);color:#1e3a5f}
+    .cht.info .cht-ico{background:#dbeafe;color:#3b82f6}.cht.info .cht-bar{background:#3b82f6}
+    .ch-fbanner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;margin-bottom:18px;
+      font-size:.85rem;font-weight:500;line-height:1.5}
+    .ch-fbanner.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#b91c1c}
+    .ch-fbanner.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#065f46}
+    @media(max-width:500px){#ch-toasts{right:12px;left:12px}.cht{min-width:unset;max-width:100%}}
+  </style>
+</head>
+<body data-page="signup">
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a class="nav-logo" href="index.html"><span><i class="fas fa-bolt"></i></span>CreatorHub</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#categories">Explore</a></li>
+      <li><a href="signup.html" style="color:var(--accent);font-weight:600">Become a Creator</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a class="btn btn-ghost" href="login.html">Login</a>
+      <a class="btn btn-primary" href="signup.html">Sign Up</a>
+    </div>
+    <div class="nav-hamburger" onclick="toggleMenu()"><i class="fas fa-bars" id="burger-icon"></i></div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="toggleMenu()">Home</a>
+    <a href="index.html#categories" onclick="toggleMenu()">Explore</a>
+    <a href="signup.html" onclick="toggleMenu()">Become a Creator</a>
+    <div style="display:flex;gap:10px;flex-direction:column;margin-top:8px">
+      <a class="btn btn-ghost btn-full" href="login.html">Login</a>
+      <a class="btn btn-primary btn-full" href="signup.html">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div class="auth-page">
+    <div class="auth-blob1"></div>
+    <div class="auth-blob2"></div>
+    <div class="auth-card" id="signup-card">
+
+      <div class="auth-logo">
+        <a class="nav-logo" href="index.html" style="justify-content:center"><span><i class="fas fa-bolt"></i></span>CreatorHub</a>
+        <p>Join thousands of creators and clients</p>
+      </div>
+
+      <h2 class="auth-title">Create your account</h2>
+      <p class="auth-sub">Start for free — no credit card required</p>
+
+      <div class="form-group" id="sg-name">
+        <label class="form-label">Full Name</label>
+        <div class="input-wrap">
+          <i class="fas fa-user"></i>
+          <input type="text" id="sg-name-input" placeholder="Priya Sharma" oninput="sgClearErr('sg-name')"/>
+        </div>
+        <div class="error-msg">Please enter your full name</div>
+      </div>
+
+      <div class="form-group" id="sg-email">
+        <label class="form-label">Email Address</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="sg-email-input" placeholder="you@example.com" oninput="sgClearErr('sg-email')"/>
+        </div>
+        <div class="error-msg">Please enter a valid email address</div>
+      </div>
+
+      <div class="form-group" id="sg-pass">
+        <label class="form-label">Password</label>
+        <div class="input-wrap" style="position:relative">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="sg-pass-input" placeholder="Min. 8 characters" class="has-right" oninput="sgClearErr('sg-pass')"/>
+          <i class="fas fa-eye input-wrap-right" id="sg-eye" onclick="sgTogglePass()"></i>
+        </div>
+        <div class="error-msg">Password must be at least 8 characters</div>
+      </div>
+
+      <div class="role-group">
+        <label class="form-label">I am a...</label>
+        <div class="role-options">
+          <label class="role-option selected" id="role-creator" onclick="sgSelectRole('creator')">
+            <input type="radio" name="role" value="creator" checked/>
+            <div class="role-icon">🎨</div>
+            <div class="role-text"><strong>Creator</strong><span>Sell my services</span></div>
+            <div class="role-check"><i class="fas fa-check"></i></div>
+          </label>
+          <label class="role-option" id="role-client" onclick="sgSelectRole('client')">
+            <input type="radio" name="role" value="client"/>
+            <div class="role-icon">💼</div>
+            <div class="role-text"><strong>Client</strong><span>Hire creators</span></div>
+            <div class="role-check"><i class="fas fa-check"></i></div>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" id="signup-btn" onclick="doSignup()">
+        <i class="fas fa-rocket"></i> Create Account
+      </button>
+
+      <div class="divider">or continue with</div>
+      <button class="btn btn-ghost btn-full" style="justify-content:center;gap:10px;margin-bottom:8px" disabled>
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Sign up with Google
+      </button>
+
+      <div class="form-footer">Already have an account? <a href="login.html">Login here</a></div>
+    </div>
+  </div>
+
+  <div id="ch-toasts"></div>
+
+  <script>
+  // ── Toast ──
+  const TICONS  = {success:'<i class="fas fa-check"></i>',error:'<i class="fas fa-times"></i>',info:'<i class="fas fa-info"></i>'};
+  const TTITLES = {success:'Success',error:'Error',info:'Info'};
+  function showToast(msg, type, ms) {
+    ms = ms || 4000;
+    var box = document.getElementById('ch-toasts');
+    var t = document.createElement('div');
+    t.className = 'cht ' + type;
+    t.innerHTML = '<div class="cht-ico">' + (TICONS[type]||TICONS.info) + '</div><div class="cht-body"><div class="cht-title">' + (TTITLES[type]||'Notice') + '</div><div class="cht-msg">' + msg + '</div></div><div class="cht-bar" style="animation-duration:' + ms + 'ms"></div>';
+    t.onclick = function(){ if(!t._d){ t._d=true; clearTimeout(t._t); t.classList.add('out'); setTimeout(function(){ t.remove(); }, 300); }};
+    box.appendChild(t);
+    t._t = setTimeout(function(){ t.onclick(); }, ms);
+  }
+  function showFormBanner(msg, type) {
+    var old = document.getElementById('ch-fbanner'); if (old) old.remove();
+    var b = document.createElement('div');
+    b.id = 'ch-fbanner'; b.className = 'ch-fbanner ' + type;
+    b.innerHTML = '<i class="fas ' + (type==='success'?'fa-check-circle':'fa-exclamation-circle') + '" style="font-size:1rem;flex-shrink:0"></i><span>' + msg + '</span>';
+    var card = document.getElementById('signup-card'); if (card) card.prepend(b);
+    if (type==='success') setTimeout(function(){ b.remove(); }, 6000);
+  }
+
+  // ── Helpers ──
+  function sgClearErr(id) { var g=document.getElementById(id); if(g) g.classList.remove('error'); }
+  function sgSetErr(id, msg) {
+    var g=document.getElementById(id); if(!g) return;
+    g.classList.add('error');
+    var m=g.querySelector('.error-msg'); if(m && msg) m.textContent=msg;
+  }
+  function sgTogglePass() {
+    var inp=document.getElementById('sg-pass-input'), eye=document.getElementById('sg-eye');
+    var p=inp.type==='password'; inp.type=p?'text':'password';
+    eye.className=p?'fas fa-eye-slash input-wrap-right':'fas fa-eye input-wrap-right';
+  }
+  function sgSelectRole(r) {
+    document.getElementById('role-creator').classList.toggle('selected', r==='creator');
+    document.getElementById('role-client').classList.toggle('selected', r==='client');
+  }
+
+  // ── Main signup ──
+  async function doSignup() {
+    var name  = document.getElementById('sg-name-input').value.trim();
+    var email = document.getElementById('sg-email-input').value.trim();
+    var pass  = document.getElementById('sg-pass-input').value;
+    var role  = document.querySelector('.role-option.selected input')?.value || 'client';
+    var btn   = document.getElementById('signup-btn');
+
+    var ok = true;
+    if (!name)                                                { sgSetErr('sg-name', 'Name is required'); ok=false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { sgSetErr('sg-email', 'Please enter a valid email'); ok=false; }
+    if (pass.length < 8)                                      { sgSetErr('sg-pass', 'Password must be at least 8 characters'); ok=false; }
+    if (!ok) return;
+
+    var origHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+    try {
+      var res = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: pass, role: role })
+      });
+
+      var data = await res.json();
+
+      if (!res.ok) {
+        var errMsg = data.message || 'Signup failed. Please try again.';
+        showFormBanner(errMsg, 'error');
+        showToast(errMsg, 'error', 5000);
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+        return;
+      }
+
+      // SUCCESS — save token and redirect
+      localStorage.setItem('ch_token', data.token);
+      localStorage.setItem('ch_user',  JSON.stringify(data.user));
+
+      var first = name.split(' ')[0];
+      showFormBanner('Welcome to CreatorHub, ' + first + '! 🎉  Redirecting…', 'success');
+      showToast('Account created! Welcome, ' + first + ' 🚀', 'success', 3000);
+      setTimeout(function(){ window.location.href = 'index.html'; }, 1500);
+
+    } catch (err) {
+      var netMsg = 'Cannot connect to server. Make sure your backend is running on port 5000.';
+      showFormBanner(netMsg, 'error');
+      showToast(netMsg, 'error', 6000);
+      btn.disabled = false;
+      btn.innerHTML = origHTML;
+    }
+  }
+
+  // Navbar + mobile menu
+  window.addEventListener('scroll', function() {
+    var nav=document.getElementById('navbar'); if(nav) nav.classList.toggle('scrolled', window.scrollY>10);
+  });
+  function toggleMenu() {
+    var m=document.getElementById('mobileMenu'), i=document.getElementById('burger-icon');
+    if(!m||!i) return;
+    m.classList.toggle('open');
+    i.className=m.classList.contains('open')?'fas fa-times':'fas fa-bars';
+  }
+
+  // Redirect if already logged in
+  if (localStorage.getItem('ch_token')) window.location.href = 'index.html';
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
