@@ -6,7 +6,7 @@
    your script.js:  <script src="api.js"></script>
 ═══════════════════════════════════════════════════════════════ */
 
-const API_URL = 'https://creators-hub-xbxl.onrender.com';   // ← change if hosted elsewhere
+const API_URL = 'https://creators-hub-xbxl.onrender.com/api';   // ← change if hosted elsewhere
 
 // ─── TOKEN HELPERS ───────────────────────────────────────────────────────────
 
