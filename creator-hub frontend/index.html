@@ -915,36 +915,45 @@
       <p>All rights reserved.</p>
     </div>
   </footer>
-  <script src="api.js"></script>
-  <script src="script.js"></script>
+ <script src="api.js"></script>
+<script src="script.js"></script>
 <script>
-  // Load real creators from backend
-  async function loadCreators() {
-    try {
-      const { users } = await Users.getAll();
-      const Creators = users.filter(u => u.role === 'creator');
-      const grid = document.getElementById('creator-grid');
-      if (!grid || creators.length === 0) return;
+async function loadCreators() {
+  try {
+    const res  = await fetch('https://creators-hub-xbxl.onrender.com/api/users?limit=6');
+    const data = await res.json();
+    const creators = (data.users || []).filter(u => u.role === 'creator');
+    const grid = document.getElementById('creator-grid');
+    if (!grid || creators.length === 0) return;
 
-      grid.innerHTML = creators.map(c => `
-        <div class="creator-card">
-          <div class="creator-card-banner"></div>
+    grid.innerHTML = creators.map(c => `
+      <div class="creator-card">
+        <div class="creator-card-top" style="background:linear-gradient(135deg,#5b3bf5,#8b5cf6)">
           <div class="creator-avatar">
-            <img src="${c.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(c.name) + '&background=5b3bf5&color=fff'}" alt="${c.name}"/>
+            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=5b3bf5&color=fff&size=80" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>
           </div>
-          <div class="creator-info">
-            <h3>${c.name}</h3>
-            <p>${c.bio || 'Creative Professional'}</p>
-          </div>
-          <a class="btn btn-primary" href="profile.html?id=${c.id}">View Profile</a>
+          <span class="creator-badge">Creator</span>
         </div>
-      `).join('');
-    } catch (err) {
-      console.log('Could not load creators:', err.message);
-    }
+        <div class="creator-body">
+          <div class="creator-name">${c.name}</div>
+          <div class="creator-skill">${c.bio ? c.bio.split('.')[0] : 'Creative Professional'}</div>
+          <div class="stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span>New Creator</span>
+          </div>
+          <div class="creator-footer">
+            <div class="creator-price">Available <small>for hire</small></div>
+            <a class="btn btn-primary" href="profile.html?id=${c.id}">View Profile</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(err) {
+    console.log('Could not load creators:', err.message);
   }
-
-  loadCreators();
+}
+loadCreators();
 </script>
 </body>
 </html>
