@@ -137,6 +137,8 @@
   <div id="ch-toasts"></div>
 
   <script>
+    // Force correct API URL
+const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
   // ── Toast ──
   const TICONS  = {success:'<i class="fas fa-check"></i>',error:'<i class="fas fa-times"></i>',info:'<i class="fas fa-info"></i>'};
   const TTITLES = {success:'Success',error:'Error',info:'Info'};
@@ -195,10 +197,11 @@
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
     try {
-     var res = await fetch('https://creators-hub-xbxl.onrender.com/api/auth/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password, role })
+    var res = await fetch(SIGNUP_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: name, email: email, password: pass, role: role })
+});
         });
 
       var data = await res.json();
