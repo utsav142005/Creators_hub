@@ -137,11 +137,12 @@
   <div id="ch-toasts"></div>
 
   <script>
-    // Force correct API URL
-const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
+  // ── API URL ──
+  var BACKEND = 'https://creators-hub-xbxl.onrender.com';
+
   // ── Toast ──
-  const TICONS  = {success:'<i class="fas fa-check"></i>',error:'<i class="fas fa-times"></i>',info:'<i class="fas fa-info"></i>'};
-  const TTITLES = {success:'Success',error:'Error',info:'Info'};
+  var TICONS  = {success:'<i class="fas fa-check"></i>',error:'<i class="fas fa-times"></i>',info:'<i class="fas fa-info"></i>'};
+  var TTITLES = {success:'Success',error:'Error',info:'Info'};
   function showToast(msg, type, ms) {
     ms = ms || 4000;
     var box = document.getElementById('ch-toasts');
@@ -183,7 +184,7 @@ const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
     var name  = document.getElementById('sg-name-input').value.trim();
     var email = document.getElementById('sg-email-input').value.trim();
     var pass  = document.getElementById('sg-pass-input').value;
-    var role  = document.querySelector('.role-option.selected input')?.value || 'client';
+    var role  = document.querySelector('.role-option.selected input') ? document.querySelector('.role-option.selected input').value : 'client';
     var btn   = document.getElementById('signup-btn');
 
     var ok = true;
@@ -197,11 +198,11 @@ const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
     try {
-    var res = await fetch(SIGNUP_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name: name, email: email, password: pass, role: role })
-});
+      var res = await fetch(BACKEND + '/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: pass, role: role })
+      });
 
       var data = await res.json();
 
@@ -214,9 +215,8 @@ const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
         return;
       }
 
-      // SUCCESS — save token and redirect
       localStorage.setItem('ch_token', data.token);
-      localStorage.setItem('ch_user',  JSON.stringify(data.user));
+      localStorage.setItem('ch_user', JSON.stringify(data.user));
 
       var first = name.split(' ')[0];
       showFormBanner('Welcome to CreatorHub, ' + first + '! 🎉  Redirecting…', 'success');
@@ -224,15 +224,14 @@ const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
       setTimeout(function(){ window.location.href = 'index.html'; }, 1500);
 
     } catch (err) {
-      var netMsg = 'Cannot connect to server. Make sure your backend is running on port 5000.';
-      showFormBanner(netMsg, 'error');
-      showToast(netMsg, 'error', 6000);
+      showFormBanner('Cannot connect to server. Please try again later.', 'error');
+      showToast('Cannot connect to server.', 'error', 6000);
       btn.disabled = false;
       btn.innerHTML = origHTML;
     }
   }
 
-  // Navbar + mobile menu
+  // ── Navbar + mobile menu ──
   window.addEventListener('scroll', function() {
     var nav=document.getElementById('navbar'); if(nav) nav.classList.toggle('scrolled', window.scrollY>10);
   });
