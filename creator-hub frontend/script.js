@@ -259,9 +259,9 @@ async function loadFeaturedCreators() {
 function getStaticCreatorCards() {
   const list = [
     {name:'Utsav Talreja',   skill:'UI/UX Designer',       grad:'',      e:'🎨', badge:'Top Rated',  price:'₹1,200', r:'5.0', rv:'124'},
-    {name:'Ashutosh Malik',  skill:'Video Editor & Motion', grad:'warm',  e:'🎬', badge:'Pro',         price:'₹800',   r:'4.8', rv:'87'},
-    {name:'Umesh Farkade',     skill:'Full-Stack Developer',  grad:'teal',  e:'💻', badge:'Rising Star', price:'₹2,500', r:'4.9', rv:'56'},
-    {name:'Vibhanshu Singh',     skill:'ML engineer',    grad:'rose',  e:'✍️', badge:'Top Rated',  price:'₹500',   r:'4.7', rv:'203'},
+    {name:'Arjun Mehta',     skill:'Video Editor & Motion', grad:'warm',  e:'🎬', badge:'Pro',         price:'₹800',   r:'4.8', rv:'87'},
+    {name:'Neha Kapoor',     skill:'Full-Stack Developer',  grad:'teal',  e:'💻', badge:'Rising Star', price:'₹2,500', r:'4.9', rv:'56'},
+    {name:'Rohan Verma',     skill:'Content Strategist',    grad:'rose',  e:'✍️', badge:'Top Rated',  price:'₹500',   r:'4.7', rv:'203'},
     {name:'Simran Kaur',     skill:'Social Media Manager',  grad:'green', e:'📱', badge:'Pro',         price:'₹1,800', r:'5.0', rv:'41'},
     {name:'Dev Anand',       skill:'Music Producer',         grad:'violet',e:'🎵', badge:'New',         price:'₹600',   r:'4.6', rv:'29'},
   ];
