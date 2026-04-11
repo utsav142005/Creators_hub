@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
-<body data-page="home">
+<body>
 
   <!-- ─── NAVBAR ─── -->
   <nav id="navbar">
@@ -80,19 +80,28 @@
         <div class="hero-card-float hc1">
           <div class="stat-chip">
             <div class="icon purple"><i class="fas fa-users"></i></div>
-            <div><div class="val">12K+</div><div class="lbl">Active Creators</div></div>
+            <div>
+              <div class="val">12K+</div>
+              <div class="lbl">Active Creators</div>
+            </div>
           </div>
         </div>
         <div class="hero-card-float hc2" style="animation-delay:1s">
           <div class="stat-chip">
             <div class="icon orange"><i class="fas fa-briefcase"></i></div>
-            <div><div class="val">50K+</div><div class="lbl">Jobs Done</div></div>
+            <div>
+              <div class="val">50K+</div>
+              <div class="lbl">Jobs Done</div>
+            </div>
           </div>
         </div>
         <div class="hero-card-float hc3" style="animation-delay:.5s">
           <div class="stat-chip">
             <div class="icon teal"><i class="fas fa-star"></i></div>
-            <div><div class="val">4.9★</div><div class="lbl">Avg Rating</div></div>
+            <div>
+              <div class="val">4.9★</div>
+              <div class="lbl">Avg Rating</div>
+            </div>
           </div>
         </div>
       </div>
@@ -102,57 +111,217 @@
 
   <!-- ─── CATEGORY STYLES ─── -->
   <style>
+    /* Fix: ::before overlay must not block clicks */
     .cat-card::before { pointer-events: none !important; }
-    .cat-card { position:relative; overflow:hidden; transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s ease !important; }
-    .cat-card:hover { transform:translateY(-6px) scale(1.02) !important; box-shadow:0 16px 40px rgba(0,0,0,0.13) !important; }
-    .cat-card .cat-spark { position:absolute;top:14px;right:14px;width:8px;height:8px;border-radius:50%;opacity:0;transform:scale(0);transition:opacity .25s,transform .25s; }
-    .cat-card:hover .cat-spark { opacity:1;transform:scale(1); }
-    .cat-arrow-hint { position:absolute;bottom:14px;right:14px;font-size:.72rem;opacity:0;transform:translateX(-8px);transition:opacity .25s,transform .25s;z-index:2; }
-    .cat-card:hover .cat-arrow-hint { opacity:1;transform:translateX(0); }
-    #ch-modal-backdrop { position:fixed;inset:0;z-index:900;background:rgba(10,8,28,0.55);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .32s ease; }
-    #ch-modal-backdrop.open { opacity:1;pointer-events:auto; }
-    #ch-modal-panel { position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--surface);border-radius:28px 28px 0 0;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 -12px 60px rgba(0,0,0,0.22);transform:translateY(100%);transition:transform .42s cubic-bezier(.32,.72,0,1); }
+
+    /* Enhanced card hover */
+    .cat-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease !important;
+    }
+    .cat-card:hover {
+      transform: translateY(-6px) scale(1.02) !important;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.13) !important;
+    }
+
+    /* Animated sparkle dot in top-right on hover */
+    .cat-card .cat-spark {
+      position:absolute; top:14px; right:14px;
+      width:8px; height:8px; border-radius:50%;
+      opacity:0; transform:scale(0);
+      transition: opacity .25s, transform .25s;
+    }
+    .cat-card:hover .cat-spark { opacity:1; transform:scale(1); }
+
+    /* Arrow that slides in on hover */
+    .cat-arrow-hint {
+      position:absolute; bottom:14px; right:14px;
+      font-size:.72rem; opacity:0;
+      transform:translateX(-8px);
+      transition: opacity .25s, transform .25s;
+      z-index:2;
+    }
+    .cat-card:hover .cat-arrow-hint { opacity:1; transform:translateX(0); }
+
+    /* ── MODAL OVERLAY ── */
+    #ch-modal-backdrop {
+      position:fixed; inset:0; z-index:900;
+      background:rgba(10,8,28,0.55);
+      backdrop-filter:blur(6px);
+      opacity:0; pointer-events:none;
+      transition:opacity .32s ease;
+    }
+    #ch-modal-backdrop.open { opacity:1; pointer-events:auto; }
+
+    /* ── MODAL PANEL ── */
+    #ch-modal-panel {
+      position:fixed; bottom:0; left:0; right:0; z-index:901;
+      background:var(--surface);
+      border-radius:28px 28px 0 0;
+      max-height:90vh;
+      display:flex; flex-direction:column;
+      box-shadow:0 -12px 60px rgba(0,0,0,0.22);
+      transform:translateY(100%);
+      transition:transform .42s cubic-bezier(.32,.72,0,1);
+    }
     #ch-modal-panel.open { transform:translateY(0); }
-    .modal-handle { width:44px;height:5px;border-radius:3px;background:var(--surface-3);margin:14px auto 0;flex-shrink:0; }
-    .modal-header { display:flex;align-items:center;justify-content:space-between;padding:16px 28px 14px;border-bottom:1px solid var(--border);flex-shrink:0; }
-    .modal-header-left { display:flex;align-items:center;gap:14px; }
-    .modal-cat-icon { width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:1.35rem;flex-shrink:0; }
-    .modal-cat-title { font-family:var(--font-head);font-weight:800;font-size:1.3rem;color:var(--ink); }
-    .modal-cat-sub { font-size:.82rem;color:var(--ink-muted);margin-top:3px; }
-    .modal-close-btn { width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:grid;place-items:center;font-size:.9rem;color:var(--ink-light);transition:all .2s;flex-shrink:0; }
-    .modal-close-btn:hover { background:var(--surface-3);border-color:var(--accent);color:var(--accent); }
-    .modal-sort-bar { display:flex;align-items:center;gap:8px;padding:12px 28px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0; }
+
+    /* Drag handle */
+    .modal-handle {
+      width:44px; height:5px; border-radius:3px;
+      background:var(--surface-3);
+      margin:14px auto 0;
+      flex-shrink:0;
+    }
+
+    /* Modal header */
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 28px 14px;
+      border-bottom:1px solid var(--border);
+      flex-shrink:0;
+    }
+    .modal-header-left { display:flex; align-items:center; gap:14px; }
+    .modal-cat-icon {
+      width:50px; height:50px; border-radius:14px;
+      display:grid; place-items:center;
+      font-size:1.35rem; flex-shrink:0;
+    }
+    .modal-cat-title {
+      font-family:var(--font-head); font-weight:800;
+      font-size:1.3rem; color:var(--ink);
+    }
+    .modal-cat-sub { font-size:.82rem; color:var(--ink-muted); margin-top:3px; }
+    .modal-close-btn {
+      width:38px; height:38px; border-radius:50%;
+      border:1.5px solid var(--border);
+      background:var(--surface); cursor:pointer;
+      display:grid; place-items:center;
+      font-size:.9rem; color:var(--ink-light);
+      transition:all .2s; flex-shrink:0;
+    }
+    .modal-close-btn:hover { background:var(--surface-3); border-color:var(--accent); color:var(--accent); }
+
+    /* Sort bar */
+    .modal-sort-bar {
+      display:flex; align-items:center; gap:8px;
+      padding:12px 28px;
+      border-bottom:1px solid var(--border);
+      overflow-x:auto; scrollbar-width:none;
+      flex-shrink:0;
+    }
     .modal-sort-bar::-webkit-scrollbar { display:none; }
-    .sort-pill { padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:.78rem;font-family:var(--font-body);font-weight:500;color:var(--ink-light);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0; }
-    .sort-pill:hover { border-color:var(--accent);color:var(--accent); }
-    .sort-pill.active { color:#fff;border-color:transparent; }
-    #ch-services-grid { padding:24px 28px 32px;overflow-y:auto;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;align-content:start; }
+    .sort-pill {
+      padding:6px 16px; border-radius:20px;
+      border:1.5px solid var(--border);
+      background:var(--surface);
+      font-size:.78rem; font-family:var(--font-body);
+      font-weight:500; color:var(--ink-light);
+      cursor:pointer; white-space:nowrap;
+      transition:all .2s; flex-shrink:0;
+    }
+    .sort-pill:hover { border-color:var(--accent); color:var(--accent); }
+    .sort-pill.active { color:#fff; border-color:transparent; }
+
+    /* Services grid */
+    #ch-services-grid {
+      padding:24px 28px 32px;
+      overflow-y:auto;
+      flex:1;
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+      gap:18px;
+      align-content:start;
+    }
     #ch-services-grid::-webkit-scrollbar { width:5px; }
-    #ch-services-grid::-webkit-scrollbar-thumb { background:var(--surface-3);border-radius:4px; }
-    .svc-card { background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s;cursor:pointer;opacity:0;transform:translateY(18px); }
-    .svc-card.visible { opacity:1;transform:translateY(0);transition:opacity .35s ease,transform .35s ease,box-shadow .25s ease,border-color .25s; }
-    .svc-card:hover { transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,0.11); }
+    #ch-services-grid::-webkit-scrollbar-thumb { background:var(--surface-3); border-radius:4px; }
+
+    /* Service card */
+    .svc-card {
+      background:var(--surface);
+      border:1.5px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      transition:transform .25s ease, box-shadow .25s ease, border-color .25s;
+      cursor:pointer;
+      opacity:0;
+      transform:translateY(18px);
+    }
+    .svc-card.visible {
+      opacity:1; transform:translateY(0);
+      transition:opacity .35s ease, transform .35s ease, box-shadow .25s ease, border-color .25s;
+    }
+    .svc-card:hover { transform:translateY(-4px); box-shadow:0 12px 36px rgba(0,0,0,0.11); }
     .svc-top-bar { height:5px; }
     .svc-body { padding:18px; }
-    .svc-title { font-family:var(--font-head);font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:8px;line-height:1.35; }
-    .svc-creator { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
-    .svc-avatar { width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.7rem;font-weight:700;flex-shrink:0; }
-    .svc-creator-name { font-size:.8rem;color:var(--ink-muted); }
-    .svc-stars { display:flex;align-items:center;gap:3px;font-size:.72rem;margin-bottom:10px; }
+    .svc-title {
+      font-family:var(--font-head); font-weight:700;
+      font-size:.92rem; color:var(--ink);
+      margin-bottom:8px; line-height:1.35;
+    }
+    .svc-creator {
+      display:flex; align-items:center; gap:8px;
+      margin-bottom:10px;
+    }
+    .svc-avatar {
+      width:26px; height:26px; border-radius:50%;
+      display:grid; place-items:center;
+      font-size:.7rem; font-weight:700;
+      flex-shrink:0;
+    }
+    .svc-creator-name { font-size:.8rem; color:var(--ink-muted); }
+    .svc-stars { display:flex; align-items:center; gap:3px; font-size:.72rem; margin-bottom:10px; }
     .svc-stars i { color:#f59e0b; }
-    .svc-stars span { color:var(--ink-muted);margin-left:3px; }
-    .svc-tags { display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px; }
-    .svc-tag { padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600; }
-    .svc-footer { display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--surface-3); }
-    .svc-price { font-family:var(--font-head);font-weight:800;font-size:1rem;color:var(--ink); }
-    .svc-delivery { font-size:.7rem;color:var(--ink-muted);margin-top:2px; }
-    .svc-skeleton { background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:18px;animation:chPulse 1.4s ease-in-out infinite; }
+    .svc-stars span { color:var(--ink-muted); margin-left:3px; }
+    .svc-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:14px; }
+    .svc-tag {
+      padding:3px 10px; border-radius:20px;
+      font-size:.7rem; font-weight:600;
+    }
+    .svc-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      padding-top:12px; border-top:1px solid var(--surface-3);
+    }
+    .svc-price {
+      font-family:var(--font-head); font-weight:800;
+      font-size:1rem; color:var(--ink);
+    }
+    .svc-delivery { font-size:.7rem; color:var(--ink-muted); margin-top:2px; }
+    .svc-hire-btn {
+      padding:8px 18px; border-radius:20px;
+      border:none; cursor:pointer;
+      font-size:.78rem; font-weight:600;
+      font-family:var(--font-body); color:#fff;
+      transition:opacity .2s, transform .2s;
+    }
+    .svc-hire-btn:hover { opacity:.85; transform:scale(1.04); }
+
+    /* Skeleton loader */
+    .svc-skeleton {
+      background:var(--surface);
+      border:1.5px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      animation:chPulse 1.4s ease-in-out infinite;
+    }
     @keyframes chPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
-    .sk-bar { background:var(--surface-3);border-radius:6px;margin-bottom:10px; }
-    .modal-empty { grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-muted); }
-    .modal-empty i { font-size:2.5rem;opacity:.35;margin-bottom:16px;display:block; }
-    .modal-empty h3 { font-family:var(--font-head);color:var(--ink);margin-bottom:8px; }
-    @media(max-width:640px){ .modal-header{padding:14px 18px 12px} #ch-services-grid{padding:18px 14px 28px;grid-template-columns:1fr} .modal-sort-bar{padding:10px 14px} }
+    .sk-bar { background:var(--surface-3); border-radius:6px; margin-bottom:10px; }
+
+    /* Empty state */
+    .modal-empty {
+      grid-column:1/-1; text-align:center;
+      padding:60px 20px; color:var(--ink-muted);
+    }
+    .modal-empty i { font-size:2.5rem; opacity:.35; margin-bottom:16px; display:block; }
+    .modal-empty h3 { font-family:var(--font-head); color:var(--ink); margin-bottom:8px; }
+
+    /* Mobile adjustments */
+    @media(max-width:640px){
+      .modal-header { padding:14px 18px 12px; }
+      #ch-services-grid { padding:18px 14px 28px; grid-template-columns:1fr; }
+      .modal-sort-bar { padding:10px 14px; }
+    }
   </style>
 
   <!-- ─── CATEGORIES SECTION ─── -->
@@ -164,6 +333,7 @@
         <p class="section-sub">Whatever your project needs, we have skilled creators ready to deliver.</p>
       </div>
       <div class="cat-grid">
+
         <div class="cat-card" onclick="chOpenModal('Graphic Design')" style="cursor:pointer">
           <div class="cat-spark" style="background:#5b3bf5"></div>
           <div class="cat-icon" style="background:rgba(91,59,245,0.1);color:var(--accent)"><i class="fas fa-pen-nib"></i></div>
@@ -171,6 +341,7 @@
           <div class="cat-count">2,340 services</div>
           <div class="cat-arrow-hint" style="color:#5b3bf5"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Video Editing')" style="cursor:pointer">
           <div class="cat-spark" style="background:#f97316"></div>
           <div class="cat-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><i class="fas fa-film"></i></div>
@@ -178,6 +349,7 @@
           <div class="cat-count">1,820 services</div>
           <div class="cat-arrow-hint" style="color:#f97316"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Web Development')" style="cursor:pointer">
           <div class="cat-spark" style="background:#06b6d4"></div>
           <div class="cat-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4"><i class="fas fa-code"></i></div>
@@ -185,6 +357,7 @@
           <div class="cat-count">3,100 services</div>
           <div class="cat-arrow-hint" style="color:#06b6d4"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Content Writing')" style="cursor:pointer">
           <div class="cat-spark" style="background:#10b981"></div>
           <div class="cat-icon" style="background:rgba(16,185,129,0.1);color:#10b981"><i class="fas fa-feather-alt"></i></div>
@@ -192,6 +365,7 @@
           <div class="cat-count">1,650 services</div>
           <div class="cat-arrow-hint" style="color:#10b981"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Social Media')" style="cursor:pointer">
           <div class="cat-spark" style="background:#ec4899"></div>
           <div class="cat-icon" style="background:rgba(236,72,153,0.1);color:#ec4899"><i class="fas fa-hashtag"></i></div>
@@ -199,6 +373,7 @@
           <div class="cat-count">980 services</div>
           <div class="cat-arrow-hint" style="color:#ec4899"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Photography')" style="cursor:pointer">
           <div class="cat-spark" style="background:#f59e0b"></div>
           <div class="cat-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b"><i class="fas fa-camera"></i></div>
@@ -206,6 +381,7 @@
           <div class="cat-count">720 services</div>
           <div class="cat-arrow-hint" style="color:#f59e0b"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Music & Audio')" style="cursor:pointer">
           <div class="cat-spark" style="background:#6366f1"></div>
           <div class="cat-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><i class="fas fa-music"></i></div>
@@ -213,6 +389,7 @@
           <div class="cat-count">560 services</div>
           <div class="cat-arrow-hint" style="color:#6366f1"><i class="fas fa-arrow-right"></i></div>
         </div>
+
         <div class="cat-card" onclick="chOpenModal('Digital Marketing')" style="cursor:pointer">
           <div class="cat-spark" style="background:#ef4444"></div>
           <div class="cat-icon" style="background:rgba(239,68,68,0.1);color:#ef4444"><i class="fas fa-ad"></i></div>
@@ -220,6 +397,7 @@
           <div class="cat-count">1,200 services</div>
           <div class="cat-arrow-hint" style="color:#ef4444"><i class="fas fa-arrow-right"></i></div>
         </div>
+
       </div>
     </div>
   </section>
@@ -236,7 +414,9 @@
           <div class="modal-cat-sub"   id="ch-modal-sub"></div>
         </div>
       </div>
-      <button class="modal-close-btn" onclick="chCloseModal()"><i class="fas fa-times"></i></button>
+      <button class="modal-close-btn" onclick="chCloseModal()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
     <div class="modal-sort-bar">
       <span style="font-size:.78rem;color:var(--ink-muted);white-space:nowrap;flex-shrink:0">Sort by:</span>
@@ -248,96 +428,266 @@
     <div id="ch-services-grid"></div>
   </div>
 
-  <!-- ─── CATEGORY MODAL LOGIC ─── -->
+  <!-- ─── CATEGORY LOGIC (self-contained, no changes to existing scripts) ─── -->
   <script>
   (function() {
-    var BACKEND = 'https://creators-hub-xbxl.onrender.com';
 
+    // ── Static service data per category (fallback when API unavailable) ──
     var SERVICES = {
-      'Graphic Design':    [{title:'Professional Logo Design',creator:'Priya Sharma',price:1200,days:3,rating:5.0,reviews:124,tags:['Logo','Branding']},{title:'Brand Identity Package',creator:'Ankit Verma',price:3500,days:7,rating:4.8,reviews:89,tags:['Brand','Identity']},{title:'Social Media Graphics Pack',creator:'Sneha Patel',price:800,days:2,rating:4.7,reviews:56,tags:['Social','Graphics']},{title:'Business Card Design',creator:'Raj Kumar',price:500,days:1,rating:4.9,reviews:203,tags:['Print','Cards']},{title:'Flyer & Poster Design',creator:'Meera Nair',price:600,days:2,rating:4.6,reviews:67,tags:['Print','Marketing']},{title:'Infographic Design',creator:'Dev Singh',price:1500,days:4,rating:4.8,reviews:45,tags:['Data','Visual']}],
-      'Video Editing':     [{title:'YouTube Video Editing',creator:'Arjun Mehta',price:800,days:3,rating:4.8,reviews:87,tags:['YouTube','Edit']},{title:'Instagram Reels Creation',creator:'Kavya Sharma',price:500,days:1,rating:4.9,reviews:142,tags:['Reels','Instagram']},{title:'Wedding Video Highlights',creator:'Rohan Das',price:5000,days:7,rating:5.0,reviews:34,tags:['Wedding','Premium']},{title:'Motion Graphics & Animation',creator:'Aisha Khan',price:2500,days:5,rating:4.7,reviews:61,tags:['Motion','Animation']},{title:'Corporate Promo Video',creator:'Vikram Rao',price:4000,days:6,rating:4.8,reviews:28,tags:['Corporate','Promo']},{title:'Podcast Video Editing',creator:'Nisha Gupta',price:700,days:2,rating:4.6,reviews:93,tags:['Podcast','Audio']}],
-      'Web Development':   [{title:'React.js Landing Page',creator:'Neha Kapoor',price:2500,days:5,rating:4.9,reviews:56,tags:['React','Frontend']},{title:'Full Stack MERN App',creator:'Siddharth Jain',price:8000,days:14,rating:4.8,reviews:23,tags:['MERN','Fullstack']},{title:'WordPress Website',creator:'Pooja Mishra',price:3000,days:7,rating:4.7,reviews:78,tags:['WordPress','CMS']},{title:'E-Commerce (Shopify)',creator:'Karan Malhotra',price:5000,days:10,rating:4.9,reviews:45,tags:['Shopify','Store']},{title:'REST API Development',creator:'Amit Tiwari',price:4000,days:8,rating:4.8,reviews:37,tags:['API','Backend']},{title:'Bug Fixing & Optimization',creator:'Riya Sen',price:1000,days:2,rating:4.6,reviews:112,tags:['Debug','Fix']}],
-      'Content Writing':   [{title:'SEO Blog Articles (1000w)',creator:'Rohan Verma',price:500,days:2,rating:4.7,reviews:203,tags:['SEO','Blog']},{title:'Website Copywriting',creator:'Ananya Roy',price:1500,days:3,rating:4.8,reviews:89,tags:['Copy','Web']},{title:'Product Descriptions x10',creator:'Sana Sheikh',price:800,days:2,rating:4.9,reviews:67,tags:['Product','Ecom']},{title:'LinkedIn Profile Writing',creator:'Harsh Vardhan',price:600,days:1,rating:4.7,reviews:145,tags:['LinkedIn','Profile']},{title:'Email Newsletter Content',creator:'Prachi Joshi',price:700,days:2,rating:4.6,reviews:54,tags:['Email','Newsletter']},{title:'Technical Documentation',creator:'Mohit Agarwal',price:2000,days:5,rating:4.8,reviews:31,tags:['Tech','Docs']}],
-      'Social Media':      [{title:'Instagram Growth Strategy',creator:'Simran Kaur',price:1800,days:3,rating:5.0,reviews:41,tags:['Instagram','Growth']},{title:'30-Day Social Media Plan',creator:'Tanya Sharma',price:2500,days:5,rating:4.8,reviews:67,tags:['Strategy','Plan']},{title:'Facebook Ads Management',creator:'Vivek Pandey',price:3000,days:7,rating:4.7,reviews:89,tags:['Ads','Facebook']},{title:'Twitter/X Content Creation',creator:'Aditi Rao',price:1200,days:3,rating:4.6,reviews:52,tags:['Twitter','Content']},{title:'YouTube Channel Management',creator:'Nikhil Gupta',price:4000,days:7,rating:4.9,reviews:28,tags:['YouTube','Manage']},{title:'Influencer Outreach',creator:'Priya Mehta',price:5000,days:10,rating:4.8,reviews:19,tags:['Influencer','PR']}],
-      'Photography':       [{title:'Product Photography x10',creator:'Rahul Kapoor',price:2000,days:3,rating:4.9,reviews:78,tags:['Product','Studio']},{title:'Portrait Session',creator:'Shreya Das',price:3000,days:2,rating:4.8,reviews:56,tags:['Portrait','Personal']},{title:'Food Photography',creator:'Aryan Malhotra',price:2500,days:3,rating:4.7,reviews:43,tags:['Food','Restaurant']},{title:'Real Estate Photography',creator:'Divya Singh',price:4000,days:3,rating:4.9,reviews:34,tags:['Real Estate','Interior']},{title:'Event Photography (4 hrs)',creator:'Kabir Nair',price:5000,days:5,rating:5.0,reviews:23,tags:['Event','Coverage']},{title:'Photo Retouching x20',creator:'Isha Jain',price:800,days:2,rating:4.6,reviews:112,tags:['Edit','Retouch']}],
-      'Music & Audio':     [{title:'Background Music for Video',creator:'Dev Anand',price:600,days:2,rating:4.6,reviews:29,tags:['BGM','Video']},{title:'Podcast Intro/Outro Jingle',creator:'Maya Pillai',price:800,days:3,rating:4.8,reviews:47,tags:['Podcast','Jingle']},{title:'Full Music Production',creator:'Arjun Nair',price:3000,days:7,rating:4.9,reviews:34,tags:['Music','Produce']},{title:'Voice Over Recording',creator:'Sana Malik',price:500,days:1,rating:4.7,reviews:89,tags:['Voice','VO']},{title:'Audio Mixing & Mastering',creator:'Kush Verma',price:1500,days:3,rating:4.8,reviews:56,tags:['Mix','Master']},{title:'Sound Effects Design',creator:'Ria Shah',price:1000,days:2,rating:4.6,reviews:41,tags:['SFX','Design']}],
-      'Digital Marketing': [{title:'Google Ads Campaign',creator:'Aakash Sharma',price:3000,days:5,rating:4.8,reviews:67,tags:['Google','PPC']},{title:'SEO Audit & Strategy',creator:'Priyanka Joshi',price:2000,days:4,rating:4.9,reviews:89,tags:['SEO','Audit']},{title:'Email Marketing Campaign',creator:'Sameer Khan',price:1500,days:3,rating:4.7,reviews:54,tags:['Email','Campaign']},{title:'WhatsApp Marketing Setup',creator:'Deepika Rao',price:1200,days:2,rating:4.6,reviews:78,tags:['WhatsApp','Mobile']},{title:'Affiliate Marketing Plan',creator:'Rohan Mehta',price:2500,days:5,rating:4.8,reviews:43,tags:['Affiliate','Plan']},{title:'Analytics Dashboard Setup',creator:'Neha Singh',price:2000,days:4,rating:4.9,reviews:31,tags:['Analytics','Report']}]
+      'Graphic Design': [
+        { title:'Professional Logo Design',    creator:'Priya Sharma',    price:1200, days:3, rating:5.0, reviews:124, tags:['Logo','Branding'] },
+        { title:'Brand Identity Package',      creator:'Ankit Verma',     price:3500, days:7, rating:4.8, reviews:89,  tags:['Brand','Identity'] },
+        { title:'Social Media Graphics Pack',  creator:'Sneha Patel',     price:800,  days:2, rating:4.7, reviews:56,  tags:['Social','Graphics'] },
+        { title:'Business Card Design',        creator:'Raj Kumar',       price:500,  days:1, rating:4.9, reviews:203, tags:['Print','Cards'] },
+        { title:'Flyer & Poster Design',       creator:'Meera Nair',      price:600,  days:2, rating:4.6, reviews:67,  tags:['Print','Marketing'] },
+        { title:'Infographic Design',          creator:'Dev Singh',       price:1500, days:4, rating:4.8, reviews:45,  tags:['Data','Visual'] },
+      ],
+      'Video Editing': [
+        { title:'YouTube Video Editing',       creator:'Arjun Mehta',     price:800,  days:3, rating:4.8, reviews:87,  tags:['YouTube','Edit'] },
+        { title:'Instagram Reels Creation',    creator:'Kavya Sharma',    price:500,  days:1, rating:4.9, reviews:142, tags:['Reels','Instagram'] },
+        { title:'Wedding Video Highlights',    creator:'Rohan Das',       price:5000, days:7, rating:5.0, reviews:34,  tags:['Wedding','Premium'] },
+        { title:'Motion Graphics & Animation', creator:'Aisha Khan',      price:2500, days:5, rating:4.7, reviews:61,  tags:['Motion','Animation'] },
+        { title:'Corporate Promo Video',       creator:'Vikram Rao',      price:4000, days:6, rating:4.8, reviews:28,  tags:['Corporate','Promo'] },
+        { title:'Podcast Video Editing',       creator:'Nisha Gupta',     price:700,  days:2, rating:4.6, reviews:93,  tags:['Podcast','Audio'] },
+      ],
+      'Web Development': [
+        { title:'React.js Landing Page',       creator:'Neha Kapoor',     price:2500, days:5, rating:4.9, reviews:56,  tags:['React','Frontend'] },
+        { title:'Full Stack MERN App',         creator:'Siddharth Jain',  price:8000, days:14,rating:4.8, reviews:23,  tags:['MERN','Fullstack'] },
+        { title:'WordPress Website',           creator:'Pooja Mishra',    price:3000, days:7, rating:4.7, reviews:78,  tags:['WordPress','CMS'] },
+        { title:'E-Commerce (Shopify)',        creator:'Karan Malhotra',  price:5000, days:10,rating:4.9, reviews:45,  tags:['Shopify','Store'] },
+        { title:'REST API Development',        creator:'Amit Tiwari',     price:4000, days:8, rating:4.8, reviews:37,  tags:['API','Backend'] },
+        { title:'Bug Fixing & Optimization',   creator:'Riya Sen',        price:1000, days:2, rating:4.6, reviews:112, tags:['Debug','Fix'] },
+      ],
+      'Content Writing': [
+        { title:'SEO Blog Articles (1000w)',   creator:'Rohan Verma',     price:500,  days:2, rating:4.7, reviews:203, tags:['SEO','Blog'] },
+        { title:'Website Copywriting',         creator:'Ananya Roy',      price:1500, days:3, rating:4.8, reviews:89,  tags:['Copy','Web'] },
+        { title:'Product Descriptions ×10',   creator:'Sana Sheikh',     price:800,  days:2, rating:4.9, reviews:67,  tags:['Product','Ecom'] },
+        { title:'LinkedIn Profile Writing',    creator:'Harsh Vardhan',   price:600,  days:1, rating:4.7, reviews:145, tags:['LinkedIn','Profile'] },
+        { title:'Email Newsletter Content',    creator:'Prachi Joshi',    price:700,  days:2, rating:4.6, reviews:54,  tags:['Email','Newsletter'] },
+        { title:'Technical Documentation',     creator:'Mohit Agarwal',   price:2000, days:5, rating:4.8, reviews:31,  tags:['Tech','Docs'] },
+      ],
+      'Social Media': [
+        { title:'Instagram Growth Strategy',   creator:'Simran Kaur',     price:1800, days:3, rating:5.0, reviews:41,  tags:['Instagram','Growth'] },
+        { title:'30-Day Social Media Plan',    creator:'Tanya Sharma',    price:2500, days:5, rating:4.8, reviews:67,  tags:['Strategy','Plan'] },
+        { title:'Facebook Ads Management',     creator:'Vivek Pandey',    price:3000, days:7, rating:4.7, reviews:89,  tags:['Ads','Facebook'] },
+        { title:'Twitter/X Content Creation',  creator:'Aditi Rao',       price:1200, days:3, rating:4.6, reviews:52,  tags:['Twitter','Content'] },
+        { title:'YouTube Channel Management',  creator:'Nikhil Gupta',    price:4000, days:7, rating:4.9, reviews:28,  tags:['YouTube','Manage'] },
+        { title:'Influencer Outreach',         creator:'Priya Mehta',     price:5000, days:10,rating:4.8, reviews:19,  tags:['Influencer','PR'] },
+      ],
+      'Photography': [
+        { title:'Product Photography ×10',     creator:'Rahul Kapoor',    price:2000, days:3, rating:4.9, reviews:78,  tags:['Product','Studio'] },
+        { title:'Portrait Session',            creator:'Shreya Das',      price:3000, days:2, rating:4.8, reviews:56,  tags:['Portrait','Personal'] },
+        { title:'Food Photography',            creator:'Aryan Malhotra',  price:2500, days:3, rating:4.7, reviews:43,  tags:['Food','Restaurant'] },
+        { title:'Real Estate Photography',     creator:'Divya Singh',     price:4000, days:3, rating:4.9, reviews:34,  tags:['Real Estate','Interior'] },
+        { title:'Event Photography (4 hrs)',   creator:'Kabir Nair',      price:5000, days:5, rating:5.0, reviews:23,  tags:['Event','Coverage'] },
+        { title:'Photo Retouching ×20',        creator:'Isha Jain',       price:800,  days:2, rating:4.6, reviews:112, tags:['Edit','Retouch'] },
+      ],
+      'Music & Audio': [
+        { title:'Background Music for Video',  creator:'Dev Anand',       price:600,  days:2, rating:4.6, reviews:29,  tags:['BGM','Video'] },
+        { title:'Podcast Intro/Outro Jingle',  creator:'Maya Pillai',     price:800,  days:3, rating:4.8, reviews:47,  tags:['Podcast','Jingle'] },
+        { title:'Full Music Production',       creator:'Arjun Nair',      price:3000, days:7, rating:4.9, reviews:34,  tags:['Music','Produce'] },
+        { title:'Voice Over Recording',        creator:'Sana Malik',      price:500,  days:1, rating:4.7, reviews:89,  tags:['Voice','VO'] },
+        { title:'Audio Mixing & Mastering',    creator:'Kush Verma',      price:1500, days:3, rating:4.8, reviews:56,  tags:['Mix','Master'] },
+        { title:'Sound Effects Design',        creator:'Ria Shah',        price:1000, days:2, rating:4.6, reviews:41,  tags:['SFX','Design'] },
+      ],
+      'Digital Marketing': [
+        { title:'Google Ads Campaign',         creator:'Aakash Sharma',   price:3000, days:5, rating:4.8, reviews:67,  tags:['Google','PPC'] },
+        { title:'SEO Audit & Strategy',        creator:'Priyanka Joshi',  price:2000, days:4, rating:4.9, reviews:89,  tags:['SEO','Audit'] },
+        { title:'Email Marketing Campaign',    creator:'Sameer Khan',     price:1500, days:3, rating:4.7, reviews:54,  tags:['Email','Campaign'] },
+        { title:'WhatsApp Marketing Setup',    creator:'Deepika Rao',     price:1200, days:2, rating:4.6, reviews:78,  tags:['WhatsApp','Mobile'] },
+        { title:'Affiliate Marketing Plan',    creator:'Rohan Mehta',     price:2500, days:5, rating:4.8, reviews:43,  tags:['Affiliate','Plan'] },
+        { title:'Analytics Dashboard Setup',   creator:'Neha Singh',      price:2000, days:4, rating:4.9, reviews:31,  tags:['Analytics','Report'] },
+      ]
     };
 
+    // ── Meta: icon, color, gradient per category ──
     var META = {
-      'Graphic Design':    {icon:'fas fa-pen-nib',   color:'#5b3bf5',gradient:'linear-gradient(135deg,#5b3bf5,#8b5cf6)'},
-      'Video Editing':     {icon:'fas fa-film',       color:'#f97316',gradient:'linear-gradient(135deg,#f97316,#f59e0b)'},
-      'Web Development':   {icon:'fas fa-code',       color:'#06b6d4',gradient:'linear-gradient(135deg,#06b6d4,#3b82f6)'},
-      'Content Writing':   {icon:'fas fa-feather-alt',color:'#10b981',gradient:'linear-gradient(135deg,#10b981,#14b8a6)'},
-      'Social Media':      {icon:'fas fa-hashtag',    color:'#ec4899',gradient:'linear-gradient(135deg,#ec4899,#f43f5e)'},
-      'Photography':       {icon:'fas fa-camera',     color:'#f59e0b',gradient:'linear-gradient(135deg,#f59e0b,#f97316)'},
-      'Music & Audio':     {icon:'fas fa-music',      color:'#6366f1',gradient:'linear-gradient(135deg,#6366f1,#8b5cf6)'},
-      'Digital Marketing': {icon:'fas fa-ad',         color:'#ef4444',gradient:'linear-gradient(135deg,#ef4444,#f97316)'}
+      'Graphic Design':    { icon:'fas fa-pen-nib',    color:'#5b3bf5', gradient:'linear-gradient(135deg,#5b3bf5,#8b5cf6)' },
+      'Video Editing':     { icon:'fas fa-film',        color:'#f97316', gradient:'linear-gradient(135deg,#f97316,#f59e0b)' },
+      'Web Development':   { icon:'fas fa-code',        color:'#06b6d4', gradient:'linear-gradient(135deg,#06b6d4,#3b82f6)' },
+      'Content Writing':   { icon:'fas fa-feather-alt', color:'#10b981', gradient:'linear-gradient(135deg,#10b981,#14b8a6)' },
+      'Social Media':      { icon:'fas fa-hashtag',     color:'#ec4899', gradient:'linear-gradient(135deg,#ec4899,#f43f5e)' },
+      'Photography':       { icon:'fas fa-camera',      color:'#f59e0b', gradient:'linear-gradient(135deg,#f59e0b,#f97316)' },
+      'Music & Audio':     { icon:'fas fa-music',       color:'#6366f1', gradient:'linear-gradient(135deg,#6366f1,#8b5cf6)' },
+      'Digital Marketing': { icon:'fas fa-ad',          color:'#ef4444', gradient:'linear-gradient(135deg,#ef4444,#f97316)' }
     };
 
-    var currentCat='', currentColor='#5b3bf5', currentGradient='', currentServices=[];
+    var currentCat      = '';
+    var currentColor    = '#5b3bf5';
+    var currentGradient = '';
+    var currentServices = [];
 
-    function stars(avg,cnt) {
-      var f=Math.floor(avg),h=(avg%1>=0.5)?1:0,e=5-f-h;
-      return '<i class="fas fa-star"></i>'.repeat(f)+(h?'<i class="fas fa-star-half-alt"></i>':'')+'<i class="far fa-star"></i>'.repeat(e)+'<span>'+avg.toFixed(1)+' ('+cnt+' reviews)</span>';
+    // ── Render star rating ──
+    function stars(avg, cnt) {
+      var full = Math.floor(avg), half = (avg % 1 >= 0.5) ? 1 : 0, empty = 5 - full - half;
+      var s = '<i class="fas fa-star"></i>'.repeat(full)
+            + (half ? '<i class="fas fa-star-half-alt"></i>' : '')
+            + '<i class="far fa-star"></i>'.repeat(empty);
+      return s + '<span>' + avg.toFixed(1) + ' (' + cnt + ' reviews)</span>';
     }
+
+    // ── Build one service card HTML ──
     function buildCard(svc) {
-      var ini=(svc.creator||'C')[0].toUpperCase();
-      var tags=(svc.tags||[]).map(function(t){return '<span class="svc-tag" style="background:'+currentColor+'18;color:'+currentColor+'">'+t+'</span>';}).join('');
-      return '<div class="svc-card"><div class="svc-top-bar" style="background:'+currentGradient+'"></div><div class="svc-body"><div class="svc-title">'+svc.title+'</div><div class="svc-creator"><div class="svc-avatar" style="background:'+currentColor+'22;color:'+currentColor+'">'+ini+'</div><span class="svc-creator-name">'+(svc.creator||'Creator')+'</span></div><div class="svc-stars">'+stars(svc.rating||0,svc.reviews||0)+'</div><div class="svc-tags">'+tags+'</div><div class="svc-footer"><div><div class="svc-price">&#8377;'+Number(svc.price).toLocaleString('en-IN')+'</div><div class="svc-delivery">Delivery: '+svc.days+' day'+(svc.days>1?'s':'')+'</div></div><button style="background:'+currentColor+';color:#fff;padding:8px 16px;border:none;border-radius:20px;cursor:pointer;font-size:.78rem;font-weight:600" onclick="alert(\'Booking coming soon!\')">Hire Now</button></div></div></div>';
+      var initials = (svc.creator || 'C')[0].toUpperCase();
+      var tagHTML  = (svc.tags || []).map(function(t) {
+        return '<span class="svc-tag" style="background:' + currentColor + '18;color:' + currentColor + '">' + t + '</span>';
+      }).join('');
+      return (
+        '<div class="svc-card">' +
+          '<div class="svc-top-bar" style="background:' + currentGradient + '"></div>' +
+          '<div class="svc-body">' +
+            '<div class="svc-title">' + svc.title + '</div>' +
+            '<div class="svc-creator">' +
+              '<div class="svc-avatar" style="background:' + currentColor + '22;color:' + currentColor + '">' + initials + '</div>' +
+              '<span class="svc-creator-name">' + (svc.creator || 'Creator') + '</span>' +
+            '</div>' +
+            '<div class="svc-stars">' + stars(svc.rating || 0, svc.reviews || 0) + '</div>' +
+            '<div class="svc-tags">' + tagHTML + '</div>' +
+            '<div class="svc-footer">' +
+              '<div>' +
+                '<div class="svc-price">&#8377;' + Number(svc.price).toLocaleString('en-IN') + '</div>' +
+                '<div class="svc-delivery">Delivery: ' + svc.days + ' day' + (svc.days > 1 ? 's' : '') + '</div>' +
+              '</div>' +
+              '<button style="background:' + currentColor + '" onclick="alert(\"Booking feature coming soon!\")">Hire Now</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
     }
+
+    // ── Show skeleton loaders ──
     function showSkeletons() {
-      var g=document.getElementById('ch-services-grid'),h='';
-      for(var i=0;i<6;i++) h+='<div class="svc-skeleton"><div class="sk-bar" style="height:5px;margin-bottom:16px;border-radius:3px"></div><div class="sk-bar" style="height:13px;width:80%"></div><div class="sk-bar" style="height:11px;width:50%"></div><div class="sk-bar" style="height:32px;margin-top:8px;border-radius:8px"></div></div>';
-      g.innerHTML=h;
+      var grid = document.getElementById('ch-services-grid');
+      var html = '';
+      for (var i = 0; i < 6; i++) {
+        html += '<div class="svc-skeleton">' +
+          '<div class="sk-bar" style="height:5px;margin-bottom:16px;border-radius:3px"></div>' +
+          '<div class="sk-bar" style="height:13px;width:80%"></div>' +
+          '<div class="sk-bar" style="height:11px;width:50%"></div>' +
+          '<div class="sk-bar" style="height:32px;margin-top:8px;border-radius:8px"></div>' +
+        '</div>';
+      }
+      grid.innerHTML = html;
     }
+
+    // ── Render services with stagger animation ──
     function renderServices(list) {
-      var grid=document.getElementById('ch-services-grid');
-      if(!list||list.length===0){grid.innerHTML='<div class="modal-empty"><i class="fas fa-search"></i><h3>No services yet</h3><p>Be the first to offer services in this category!</p><a href="signup.html" style="display:inline-block;margin-top:16px;background:'+currentColor+';color:#fff;padding:10px 24px;border-radius:20px;text-decoration:none;font-weight:600;font-size:.85rem">Become a Creator</a></div>';return;}
-      grid.innerHTML=list.map(buildCard).join('');
-      grid.querySelectorAll('.svc-card').forEach(function(card,i){setTimeout(function(){card.classList.add('visible');},i*55);});
+      var grid = document.getElementById('ch-services-grid');
+      if (!list || list.length === 0) {
+        grid.innerHTML =
+          '<div class="modal-empty">' +
+            '<i class="fas fa-search"></i>' +
+            '<h3>No services yet</h3>' +
+            '<p>Be the first to offer services in this category!</p>' +
+            '<a href="signup.html" style="display:inline-block;margin-top:16px;background:' + currentColor + ';color:#fff;padding:10px 24px;border-radius:20px;text-decoration:none;font-weight:600;font-size:.85rem">Become a Creator</a>' +
+          '</div>';
+        return;
+      }
+      grid.innerHTML = list.map(buildCard).join('');
+      // Stagger cards in
+      var cards = grid.querySelectorAll('.svc-card');
+      cards.forEach(function(card, i) {
+        setTimeout(function() { card.classList.add('visible'); }, i * 55);
+      });
     }
+
+    // ── Load services: try API, fallback to static ──
     async function loadServices(cat) {
       showSkeletons();
-      var list=[];
+      var list = [];
+      // Try backend API
       try {
-        var res=await fetch(BACKEND+'/api/services?search='+encodeURIComponent(cat)+'&limit=12');
-        if(res.ok){var json=await res.json();if(json.services&&json.services.length>0){list=json.services.map(function(s){return{title:s.title,creator:s.creator_name||'Creator',price:s.price,days:s.delivery_days||3,rating:0,reviews:0,tags:(s.tags||'').split(',').filter(Boolean)};});}}
-      } catch(e){}
-      if(list.length===0){list=SERVICES[cat]||[];}
-      currentServices=list;
+        var res = await fetch('http://localhost:5000/api/services?category=' + encodeURIComponent(cat) + '&limit=12');
+        if (res.ok) {
+          var json = await res.json();
+          if (json.data && json.data.length > 0) {
+            list = json.data.map(function(s) {
+              return {
+                title:   s.title,
+                creator: s.creator ? (s.creator.name || s.creator) : 'Creator',
+                price:   s.price,
+                days:    s.deliveryDays || 3,
+                rating:  s.rating ? (s.rating.average || 0) : 0,
+                reviews: s.rating ? (s.rating.count || 0) : 0,
+                tags:    s.tags || []
+              };
+            });
+          }
+        }
+      } catch(e) { /* API offline – use static */ }
+      // Fallback to static data
+      if (list.length === 0) { list = SERVICES[cat] || []; }
+      currentServices = list;
       renderServices(list);
     }
-    window.chOpenModal=function(cat){
-      var meta=META[cat]; if(!meta) return;
-      currentCat=cat; currentColor=meta.color; currentGradient=meta.gradient;
-      var iconEl=document.getElementById('ch-modal-icon');
-      iconEl.style.background=meta.color+'18'; iconEl.style.color=meta.color; iconEl.innerHTML='<i class="'+meta.icon+'"></i>';
-      document.getElementById('ch-modal-title').textContent=cat;
-      document.getElementById('ch-modal-sub').textContent='Browse and hire top creators';
-      document.querySelectorAll('.sort-pill').forEach(function(p){p.classList.remove('active');p.style.background='var(--surface)';p.style.color='var(--ink-light)';});
-      var pop=document.getElementById('sp-popular'); if(pop){pop.classList.add('active');pop.style.background=meta.color;pop.style.color='#fff';}
+
+    // ── Open modal ──
+    window.chOpenModal = function(cat) {
+      var meta = META[cat];
+      if (!meta) return;
+
+      currentCat      = cat;
+      currentColor    = meta.color;
+      currentGradient = meta.gradient;
+
+      // Update header
+      var iconEl = document.getElementById('ch-modal-icon');
+      iconEl.style.background = meta.color + '18';
+      iconEl.style.color      = meta.color;
+      iconEl.innerHTML        = '<i class="' + meta.icon + '"></i>';
+      document.getElementById('ch-modal-title').textContent = cat;
+      document.getElementById('ch-modal-sub').textContent   = 'Browse and hire top creators';
+
+      // Reset sort pills to Popular
+      document.querySelectorAll('.sort-pill').forEach(function(p) {
+        p.classList.remove('active');
+        p.style.background = 'var(--surface)';
+        p.style.color      = 'var(--ink-light)';
+      });
+      var popPill = document.getElementById('sp-popular');
+      if (popPill) { popPill.classList.add('active'); popPill.style.background = meta.color; popPill.style.color = '#fff'; }
+
+      // Open panel
       document.getElementById('ch-modal-backdrop').classList.add('open');
       document.getElementById('ch-modal-panel').classList.add('open');
-      document.body.style.overflow='hidden';
+      document.body.style.overflow = 'hidden';
+
+      // Load services
       loadServices(cat);
     };
-    window.chCloseModal=function(){
+
+    // ── Close modal ──
+    window.chCloseModal = function() {
       document.getElementById('ch-modal-backdrop').classList.remove('open');
       document.getElementById('ch-modal-panel').classList.remove('open');
-      document.body.style.overflow='';
+      document.body.style.overflow = '';
     };
-    window.chSort=function(type,btn){
-      document.querySelectorAll('.sort-pill').forEach(function(p){p.classList.remove('active');p.style.background='var(--surface)';p.style.color='var(--ink-light)';});
-      btn.classList.add('active'); btn.style.background=currentColor; btn.style.color='#fff';
-      var sorted=currentServices.slice();
-      if(type==='price-asc') sorted.sort(function(a,b){return a.price-b.price;});
-      else if(type==='price-desc') sorted.sort(function(a,b){return b.price-a.price;});
-      else if(type==='rating') sorted.sort(function(a,b){return b.rating-a.rating;});
-      else sorted.sort(function(a,b){return b.reviews-a.reviews;});
+
+    // ── Sort ──
+    window.chSort = function(type, btn) {
+      document.querySelectorAll('.sort-pill').forEach(function(p) {
+        p.classList.remove('active');
+        p.style.background = 'var(--surface)';
+        p.style.color      = 'var(--ink-light)';
+      });
+      btn.classList.add('active');
+      btn.style.background = currentColor;
+      btn.style.color      = '#fff';
+
+      var sorted = currentServices.slice();
+      if      (type === 'price-asc')  sorted.sort(function(a,b){ return a.price - b.price; });
+      else if (type === 'price-desc') sorted.sort(function(a,b){ return b.price - a.price; });
+      else if (type === 'rating')     sorted.sort(function(a,b){ return b.rating - a.rating; });
+      else                            sorted.sort(function(a,b){ return b.reviews - a.reviews; });
+
       renderServices(sorted);
     };
-    document.addEventListener('keydown',function(e){if(e.key==='Escape') window.chCloseModal();});
+
+    // ── Close on Escape ──
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') window.chCloseModal();
+    });
+
   })();
   </script>
 
@@ -352,10 +702,122 @@
         </div>
         <button class="btn btn-ghost" onclick="scrollToSection('categories')">View All <i class="fas fa-arrow-right"></i></button>
       </div>
-
-      <!-- ── creator-grid: filled dynamically by script.js ── -->
       <div class="creator-grid" id="creator-grid">
-        <!-- skeleton placeholders shown while loading -->
+
+        <div class="creator-card">
+          <div class="creator-card-top">
+            <div class="creator-avatar">🎨</div>
+            <span class="creator-badge">Top Rated</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Utsav Talreja</div>
+            <div class="creator-skill">UI/UX Designer</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <span>5.0 (124 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹1,200 <small>/ project</small></div>
+              <a class="btn btn-primary" href="profile.html?id=3">View Profile</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="creator-card">
+          <div class="creator-card-top warm">
+            <div class="creator-avatar">🎬</div>
+            <span class="creator-badge">Pro</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Ashutosh Malik</div>
+            <div class="creator-skill">Video Editor & Motion</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+              <span>4.8 (87 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹1000 <small>/ project</small></div>
+               <a class="btn btn-primary" href="profile.html?id=4">View Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="creator-card-top teal">
+            <div class="creator-avatar">💻</div>
+            <span class="creator-badge">Rising Star</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Umesh farkade</div>
+            <div class="creator-skill">Full-Stack Developer</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <span>4.9 (56 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹3,500 <small>/ project</small></div>
+               <a class="btn btn-primary" href="profile.html?id=5">View Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="creator-card-top rose">
+            <div class="creator-avatar">✍️</div>
+            <span class="creator-badge">Top Rated</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Vibhanshu Singh</div>
+            <div class="creator-skill">ML developer</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+              <span>4.7 (203 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹5000 <small>/ project</small></div>
+               <a class="btn btn-primary" href="profile.html?id=6">View Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="creator-card-top green">
+            <div class="creator-avatar">📱</div>
+            <span class="creator-badge">Pro</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Sunidhi Patle</div>
+            <div class="creator-skill">Social Media Manager</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <span>5.0 (41 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹1,300 <small>/ month</small></div>
+               <a class="btn btn-primary" href="profile.html?id=7">View Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="creator-card-top violet">
+            <div class="creator-avatar">🎵</div>
+            <span class="creator-badge">New</span>
+          </div>
+          <div class="creator-body">
+            <div class="creator-name">Ashutosh gautam</div>
+            <div class="creator-skill">Music Producer</div>
+            <div class="stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+              <span>4.6 (29 reviews)</span>
+            </div>
+            <div class="creator-footer">
+              <div class="creator-price">₹600 <small>/ track</small></div>
+               <a class="btn btn-primary" href="profile.html?id=8">View Profile</a>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -369,10 +831,26 @@
         <p class="section-sub" style="margin:0 auto">Get your project done in three simple steps — fast, easy, and reliable.</p>
       </div>
       <div class="steps-grid">
-        <div class="step-card"><div class="step-num">1</div><div class="step-title">Post Your Project</div><div class="step-desc">Describe what you need — budget, deadline, and any specific requirements you have.</div></div>
-        <div class="step-card"><div class="step-num">2</div><div class="step-title">Browse Creators</div><div class="step-desc">Review profiles, portfolios, and reviews to find the perfect creator for your needs.</div></div>
-        <div class="step-card"><div class="step-num">3</div><div class="step-title">Collaborate & Pay</div><div class="step-desc">Work together seamlessly and release payment only when you're 100% satisfied.</div></div>
-        <div class="step-card"><div class="step-num">4</div><div class="step-title">Get Results</div><div class="step-desc">Receive top-quality deliverables on time and grow your business with confidence.</div></div>
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Post Your Project</div>
+          <div class="step-desc">Describe what you need — budget, deadline, and any specific requirements you have.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Browse Creators</div>
+          <div class="step-desc">Review profiles, portfolios, and reviews to find the perfect creator for your needs.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Collaborate & Pay</div>
+          <div class="step-desc">Work together seamlessly and release payment only when you're 100% satisfied.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Get Results</div>
+          <div class="step-desc">Receive top-quality deliverables on time and grow your business with confidence.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -406,15 +884,30 @@
       </div>
       <div>
         <div class="footer-heading">Company</div>
-        <ul class="footer-links"><li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li></ul>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
       </div>
       <div>
         <div class="footer-heading">Support</div>
-        <ul class="footer-links"><li><a href="#">Help Center</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Community</a></li><li><a href="#">Status</a></li></ul>
+        <ul class="footer-links">
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">Status</a></li>
+        </ul>
       </div>
       <div>
         <div class="footer-heading">Legal</div>
-        <ul class="footer-links"><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Cookie Policy</a></li><li><a href="#">Refund Policy</a></li></ul>
+        <ul class="footer-links">
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Refund Policy</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-bottom">
@@ -422,11 +915,38 @@
       <p>All rights reserved.</p>
     </div>
   </footer>
-
-  <!-- ─── SCRIPTS (loaded once, at bottom) ─── -->
   <script src="api.js"></script>
   <script src="script.js"></script>
+  <script src="api.js"></script>
+<script src="script.js"></script>
+<script>
+  // Load real creators from backend
+  async function loadCreators() {
+    try {
+      const { users } = await Users.getAll();
+      const Creators = users.filter(u => u.role === 'creator');
+      const grid = document.getElementById('creator-grid');
+      if (!grid || creators.length === 0) return;
 
+      grid.innerHTML = creators.map(c => `
+        <div class="creator-card">
+          <div class="creator-card-banner"></div>
+          <div class="creator-avatar">
+            <img src="${c.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(c.name) + '&background=5b3bf5&color=fff'}" alt="${c.name}"/>
+          </div>
+          <div class="creator-info">
+            <h3>${c.name}</h3>
+            <p>${c.bio || 'Creative Professional'}</p>
+          </div>
+          <a class="btn btn-primary" href="profile.html?id=${c.id}">View Profile</a>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.log('Could not load creators:', err.message);
+    }
+  }
+
+  loadCreators();
+</script>
 </body>
 </html>
-
