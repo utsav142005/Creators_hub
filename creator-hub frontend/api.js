@@ -6,7 +6,7 @@
    your script.js:  <script src="api.js"></script>
 ═══════════════════════════════════════════════════════════════ */
 
-const API_URL = 'https://creators-hub-1.onrender.com/api';   // ← change if hosted elsewhere
+const API_URL = 'http://localhost:5000/api/auth/signup';   // ← change if hosted elsewhere
 
 // ─── TOKEN HELPERS ───────────────────────────────────────────────────────────
 
