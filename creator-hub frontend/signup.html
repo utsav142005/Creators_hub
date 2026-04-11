@@ -202,7 +202,6 @@ const SIGNUP_URL = 'https://creators-hub-xbxl.onrender.com/api/auth/signup';
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ name: name, email: email, password: pass, role: role })
 });
-        });
 
       var data = await res.json();
 
