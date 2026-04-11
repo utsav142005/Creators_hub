@@ -196,10 +196,10 @@
 
     try {
      var res = await fetch('https://creators-hub-xbxl.onrender.com/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, email: email, password: pass, role: role })
-      });
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password, role })
+        });
 
       var data = await res.json();
 
