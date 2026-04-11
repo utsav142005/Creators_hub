@@ -1,12 +1,15 @@
-// server.js — CreatorHub Backend (Render-compatible)
+// server.js — CreatorHub Backend
 require('dotenv').config();
-require('./config/initDB');
 
 const express = require('express');
 const cors    = require('cors');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
+
+// ── Auto-init database + seed creators on every start ─────────────────────────
+const initDB = require('./config/initDB');
+initDB();
 
 // ── Import routes ─────────────────────────────────────────────────────────────
 const authRoutes     = require('./routes/authRoutes');
@@ -17,11 +20,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors({ origin: '*', methods: ['GET','POST','PUT','PATCH','DELETE'], allowedHeaders: ['Content-Type','Authorization'] }));
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json());
@@ -49,7 +48,9 @@ app.use(errorHandler);
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`⚡ CreatorHub API running on port ${PORT}`);
+  console.log('\n  ⚡  CreatorHub API');
+  console.log(`  🚀  Running on port ${PORT}`);
+  console.log(`  🌍  Environment: ${process.env.NODE_ENV || 'development'}\n`);
 });
 
 module.exports = app;
