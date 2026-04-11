@@ -1,5 +1,6 @@
 // config/initDB.js
-require('dotenv').config();
+// Runs automatically when server starts — creates tables if they don't exist
+
 const db = require('./database');
 
 const tables = [
@@ -67,17 +68,15 @@ const tables = [
     ('Marketing & SEO',    'marketing',   '📈')`
 ];
 
-// sqlite3 is async — run tables one by one
+// Run all table creation statements
 const runNext = (index) => {
   if (index >= tables.length) {
-    console.log('✅  Database initialised successfully!');
-    db.close();
+    console.log('✅ Database ready!');
     return;
   }
   db.run(tables[index], (err) => {
     if (err) {
-      console.error('❌ Error:', err.message);
-      process.exit(1);
+      console.error('DB init error:', err.message);
     }
     runNext(index + 1);
   });
