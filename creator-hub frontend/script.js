@@ -4,7 +4,7 @@
    All API calls go to http://localhost:5000/api
 ═══════════════════════════════════════════════════════════ */
 
-const BASE_URL = 'https://creators-hub-xbxl.onrender.com';
+const BASE_URL = 'http://localhost:5000/api';
 
 /* ─── TOKEN HELPERS ─── */
 const Auth = {
