@@ -195,7 +195,7 @@
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
     try {
-      var res = await fetch('https://creators-hub-xbxl.onrender.com', {
+      var res = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name, email: email, password: pass, role: role })
