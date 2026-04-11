@@ -1,5 +1,6 @@
 // server.js — CreatorHub Backend (Render-compatible)
 require('dotenv').config();
+require('./config/initDB');
 
 const express = require('express');
 const cors    = require('cors');
