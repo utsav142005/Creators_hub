@@ -120,14 +120,8 @@ function logout() { Auth.clear(); showToast('You have been logged out.', 'info',
 /* ─── SCROLL / MENU ─── */
 window.addEventListener('scroll', () => { document.getElementById('navbar')?.classList.toggle('scrolled', window.scrollY > 10); });
 function toggleMenu() {
-  const menu = document.getElementById("mobileMenu");
-  const overlay = document.getElementById("overlay");
-
-  menu.classList.toggle("active");
-  overlay.classList.toggle("active");
-
-  // prevent scroll
-  document.body.classList.toggle("no-scroll");
+  const m = document.getElementById('mobileMenu'), i = document.getElementById('burger-icon'); if (!m||!i) return;
+  m.classList.toggle('open'); i.className = m.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
 }
 function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
 
