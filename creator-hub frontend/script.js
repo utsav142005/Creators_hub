@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
    CreatorHub — script.js
-   Full Backend Integration (Node.js + Express + MongoDB)
-   All API calls go to http://localhost:5000/api
+   Full Backend Integration (Node.js + Express + SQLite)
+   All API calls go to https://creators-hub-xbxl.onrender.com/api
 ═══════════════════════════════════════════════════════════ */
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://creators-hub-xbxl.onrender.com/api';
 
 /* ─── TOKEN HELPERS ─── */
 const Auth = {
@@ -35,8 +35,7 @@ async function apiFetch(endpoint, { method = 'GET', body, auth = false } = {}) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PROFESSIONAL TOAST NOTIFICATION SYSTEM
-   Replaces ALL browser alert() with beautiful toasts
+   TOAST NOTIFICATION SYSTEM
 ═══════════════════════════════════════════════════════════ */
 (function() {
   if (document.getElementById('ch-toast-css')) return;
@@ -72,7 +71,7 @@ async function apiFetch(endpoint, { method = 'GET', body, auth = false } = {}) {
   document.head.appendChild(s);
 })();
 
-const _TICONS = { success:'<i class="fas fa-check"></i>', error:'<i class="fas fa-times"></i>', info:'<i class="fas fa-info"></i>', warning:'<i class="fas fa-exclamation"></i>' };
+const _TICONS  = { success:'<i class="fas fa-check"></i>', error:'<i class="fas fa-times"></i>', info:'<i class="fas fa-info"></i>', warning:'<i class="fas fa-exclamation"></i>' };
 const _TTITLES = { success:'Success', error:'Error', info:'Info', warning:'Warning' };
 
 function showToast(message, type = 'info', ms = 4000) {
@@ -124,27 +123,9 @@ function toggleMenu() {
   const m = document.getElementById('mobileMenu'), i = document.getElementById('burger-icon'); if (!m||!i) return;
   m.classList.toggle('open'); i.className = m.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
 }
-function scrollToSection(id) {
-  var el = document.getElementById(id);
-  if (!el) {
-    el = document.querySelector('.' + id);
-  }
-  if (!el) {
-    console.warn('scrollToSection: "' + id + '" not found');
-    return;
-  }
-  var navbar    = document.getElementById('navbar');
-  var navHeight = navbar ? navbar.offsetHeight : 68;
-  var top       = el.getBoundingClientRect().top + window.pageYOffset - navHeight - 16;
-  try {
-    window.scrollTo({ top: top, behavior: 'smooth' });
-  } catch(e) {
-    window.scrollTo(0, top);
-  }
-}
-window.scrollToSection = scrollToSection;
+function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
 
-/* ─── SIGNUP (real MongoDB) ─── */
+/* ─── ROLE / PASS HELPERS ─── */
 function selectRole(r) {
   document.getElementById('role-creator')?.classList.toggle('selected', r==='creator');
   document.getElementById('role-client')?.classList.toggle('selected', r==='client');
@@ -155,6 +136,7 @@ function togglePass(id, icon) {
   icon.className = p ? 'fas fa-eye-slash input-wrap-right' : 'fas fa-eye input-wrap-right';
 }
 
+/* ─── SIGNUP ─── */
 async function handleSignup() {
   const ng=document.getElementById('sg-name'), eg=document.getElementById('sg-email'), pg=document.getElementById('sg-pass');
   if (!ng||!eg||!pg) return;
@@ -182,7 +164,7 @@ async function handleSignup() {
   }
 }
 
-/* ─── LOGIN (real MongoDB) ─── */
+/* ─── LOGIN ─── */
 async function handleLogin() {
   const eg=document.getElementById('lg-email'), pg=document.getElementById('lg-pass');
   if (!eg||!pg) return;
@@ -208,27 +190,16 @@ async function handleLogin() {
   }
 }
 
-
 /* ─── CREATORS SECTION ─── */
-const CARD_GRADIENTS = ['','warm','teal','rose','green','violet'];
-const CARD_EMOJIS    = ['🎨','🎬','💻','✍️','📱','🎵','📸','📊'];
+const CARD_GRADIENTS = ['', 'warm', 'teal', 'rose', 'green', 'violet'];
+const CARD_EMOJIS    = ['🎨', '🎬', '💻', '✍️', '📱', '🎵', '📸', '📊'];
 
 function renderStars(avg=0, count=0) {
   const f=Math.floor(avg), h=avg%1>=.5?1:0, e=5-f-h;
   return '<i class="fas fa-star"></i>'.repeat(f)+(h?'<i class="fas fa-star-half-alt"></i>':'')+
     '<i class="far fa-star"></i>'.repeat(e)+`<span>${avg.toFixed(1)} (${count} reviews)</span>`;
 }
-function buildCreatorCard(c, i) {
-  const g=CARD_GRADIENTS[i%CARD_GRADIENTS.length], e=CARD_EMOJIS[i%CARD_EMOJIS.length];
-  const skill=c.skills?.[0]||'Creative Professional', r=c.rating||{average:4.8,count:12};
-  return `<div class="creator-card" onclick="window.location.href='profile.html?id=${c._id||i}'">
-    <div class="creator-card-top ${g}"><div class="creator-avatar">${e}</div><span class="creator-badge">Creator</span></div>
-    <div class="creator-body">
-      <div class="creator-name">${c.name}</div><div class="creator-skill">${skill}</div>
-      <div class="stars">${renderStars(r.average,r.count)}</div>
-      <div class="creator-footer"><div class="creator-price">₹500 <small>/ project</small></div><button class="btn-sm">View Profile</button></div>
-    </div></div>`;
-}
+
 function buildSkeletonCards(n=6) {
   return Array.from({length:n},()=>`<div class="creator-card" style="pointer-events:none">
     <div class="creator-card-top" style="background:var(--surface-3)"></div>
@@ -239,64 +210,80 @@ function buildSkeletonCards(n=6) {
     </div></div>`).join('');
 }
 
+// ── Fetch real creators from YOUR SQLite backend ──────────────────────────────
 async function loadFeaturedCreators() {
   const grid = document.querySelector('.creator-grid'); if (!grid) return;
   grid.innerHTML = buildSkeletonCards(6);
   try {
-    const data = await apiFetch('/users/creators');
-    const creators = data.data || [];
+    // Use the correct endpoint: /users (not /users/creators)
+    const data = await apiFetch('/users?limit=6');
+    const creators = (data.users || []).filter(u => u.role === 'creator');
+
     if (creators.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-muted)"><i class="fas fa-users" style="font-size:2rem;margin-bottom:12px;display:block"></i>No creators yet. <a href="signup.html" style="color:var(--accent)">Be the first!</a></div>`;
+      // No real creators yet — show static fallback cards
+      grid.innerHTML = getStaticCreatorCards();
       return;
     }
-    grid.innerHTML = creators.slice(0,6).map(buildCreatorCard).join('');
-  } catch {
+
+    grid.innerHTML = creators.map((c, i) => {
+      const g = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
+      const e = CARD_EMOJIS[i % CARD_EMOJIS.length];
+      return `<div class="creator-card">
+        <div class="creator-card-top ${g}">
+          <div class="creator-avatar">${e}</div>
+          <span class="creator-badge">Creator</span>
+        </div>
+        <div class="creator-body">
+          <div class="creator-name">${c.name}</div>
+          <div class="creator-skill">${c.bio ? c.bio.split('.')[0] : 'Creative Professional'}</div>
+          <div class="stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span>New Creator</span>
+          </div>
+          <div class="creator-footer">
+            <div class="creator-price">Available <small>for hire</small></div>
+            <a class="btn btn-primary" href="profile.html?id=${c.id}">View Profile</a>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.log('Could not load creators from API:', err.message);
     grid.innerHTML = getStaticCreatorCards();
   }
 }
 
+// ── Static fallback cards (shown when DB is empty or API is down) ─────────────
 function getStaticCreatorCards() {
   const list = [
-    {name:'Utsav Talreja',   skill:'Front-end Developer', grad:'',      e:'🎨', badge:'Top Rated', price:'₹1,200', r:'5.0', rv:'10', id:1},
-    {name:'Umesh Farkade',   skill:'Full Stack Developer', grad:'warm',  e:'💻', badge:'Pro',        price:'₹2,000', r:'4.8', rv:'20', id:2},
-    {name:'Ashutosh Malik',  skill:'Video Editor',         grad:'teal',  e:'🎬', badge:'Rising Star',price:'₹800',   r:'4.9', rv:'15', id:3},
-    {name:'Vibhanshu Singh', skill:'ML Developer',         grad:'rose',  e:'🤖', badge:'Top Rated', price:'₹5,000', r:'4.9', rv:'15', id:4},
-    {name:'Sunidhi Patle',   skill:'Marketing Lead',       grad:'green', e:'📱', badge:'Pro',        price:'₹1,300', r:'4.9', rv:'15', id:5},
+    {name:'Utsav Talreja',   skill:'UI/UX Designer',       grad:'',      e:'🎨', badge:'Top Rated',  price:'₹1,200', r:'5.0', rv:'124'},
+    {name:'Arjun Mehta',     skill:'Video Editor & Motion', grad:'warm',  e:'🎬', badge:'Pro',         price:'₹800',   r:'4.8', rv:'87'},
+    {name:'Neha Kapoor',     skill:'Full-Stack Developer',  grad:'teal',  e:'💻', badge:'Rising Star', price:'₹2,500', r:'4.9', rv:'56'},
+    {name:'Rohan Verma',     skill:'Content Strategist',    grad:'rose',  e:'✍️', badge:'Top Rated',  price:'₹500',   r:'4.7', rv:'203'},
+    {name:'Simran Kaur',     skill:'Social Media Manager',  grad:'green', e:'📱', badge:'Pro',         price:'₹1,800', r:'5.0', rv:'41'},
+    {name:'Dev Anand',       skill:'Music Producer',         grad:'violet',e:'🎵', badge:'New',         price:'₹600',   r:'4.6', rv:'29'},
   ];
   return list.map(c=>`<div class="creator-card">
-    <div class="creator-card-top ${c.grad}"><div class="creator-avatar">${c.e}</div><span class="creator-badge">${c.badge}</span></div>
+    <div class="creator-card-top ${c.grad}">
+      <div class="creator-avatar">${c.e}</div>
+      <span class="creator-badge">${c.badge}</span>
+    </div>
     <div class="creator-body">
-      <div class="creator-name">${c.name}</div><div class="creator-skill">${c.skill}</div>
-      <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>${c.r} (${c.rv} reviews)</span></div>
-      <div class="creator-footer"><div class="creator-price">${c.price} <small>/ project</small></div><a class="btn btn-primary" href="profile.html?id=${c.id}">View Profile</a></div>
-    </div></div>`).join('');
-}
-
-/* ─── SEARCH ─── */
-async function handleSearch(q) {
-  if (!q||q.trim().length<2) return;
-  const grid=document.querySelector('.creator-grid'); if (!grid) return;
-  grid.closest('section')?.scrollIntoView({behavior:'smooth'});
-  grid.innerHTML=buildSkeletonCards(6);
-  try {
-    const data=await apiFetch(`/services?search=${encodeURIComponent(q)}&limit=6`);
-    const s=data.data||[];
-    if (!s.length) { grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-muted)"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block"></i>No results for "<strong>${q}</strong>"</div>`; return; }
-    grid.innerHTML=s.map((s,i)=>`<div class="creator-card"><div class="creator-card-top ${CARD_GRADIENTS[i%CARD_GRADIENTS.length]}"><div class="creator-avatar">${CARD_EMOJIS[i%CARD_EMOJIS.length]}</div><span class="creator-badge">${s.category}</span></div><div class="creator-body"><div class="creator-name">${s.title}</div><div class="creator-skill">${s.creator?.name||'Creator'}</div><div class="stars">${renderStars(s.rating?.average||0,s.rating?.count||0)}</div><div class="creator-footer"><div class="creator-price">₹${s.price} <small>/ project</small></div><button class="btn-sm">View</button></div></div></div>`).join('');
-  } catch { await loadFeaturedCreators(); }
-}
-
-/* ─── CATEGORY FILTER ─── */
-async function filterByCategory(cat) {
-  const grid=document.querySelector('.creator-grid'); if (!grid) return;
-  document.querySelector('.creator-grid')?.closest('section')?.scrollIntoView({behavior:'smooth'});
-  grid.innerHTML=buildSkeletonCards(6);
-  try {
-    const data=await apiFetch(`/services?category=${encodeURIComponent(cat)}&limit=6`);
-    const s=data.data||[];
-    if (!s.length) { grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-muted)"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;display:block"></i>No services in <strong>${cat}</strong> yet.</div>`; return; }
-    grid.innerHTML=s.map((s,i)=>`<div class="creator-card"><div class="creator-card-top ${CARD_GRADIENTS[i%CARD_GRADIENTS.length]}"><div class="creator-avatar">${CARD_EMOJIS[i%CARD_EMOJIS.length]}</div><span class="creator-badge">${s.category}</span></div><div class="creator-body"><div class="creator-name">${s.title}</div><div class="creator-skill">${s.creator?.name||'Creator'}</div><div class="stars">${renderStars(s.rating?.average||0,s.rating?.count||0)}</div><div class="creator-footer"><div class="creator-price">₹${s.price} <small>/ project</small></div><button class="btn-sm">View</button></div></div></div>`).join('');
-  } catch { grid.innerHTML=getStaticCreatorCards(); }
+      <div class="creator-name">${c.name}</div>
+      <div class="creator-skill">${c.skill}</div>
+      <div class="stars">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+        <span>${c.r} (${c.rv} reviews)</span>
+      </div>
+      <div class="creator-footer">
+        <div class="creator-price">${c.price} <small>/ project</small></div>
+        <a class="btn btn-primary" href="signup.html">Hire Now</a>
+      </div>
+    </div>
+  </div>`).join('');
 }
 
 /* ─── PAGE INIT ─── */
@@ -305,16 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
   if (page === 'home') {
     loadFeaturedCreators();
-    document.querySelectorAll('.cat-card').forEach(card => {
-      const cn = card.querySelector('.cat-name')?.textContent?.trim();
-      if (cn) { card.style.cursor='pointer'; card.addEventListener('click', () => filterByCategory(cn)); }
-    });
-    const si = document.querySelector('.search-bar input'), sb = document.querySelector('.search-bar .btn');
-    if (si) si.addEventListener('keydown', e => { if (e.key==='Enter') handleSearch(si.value); });
-    if (sb) sb.onclick = () => handleSearch(si?.value);
-    document.querySelectorAll('.tag-pill').forEach(p => {
-      p.addEventListener('click', () => { if (si) si.value=p.textContent; handleSearch(p.textContent); });
-    });
   }
   if (page === 'login'  && Auth.isLoggedIn()) window.location.href = 'index.html';
   if (page === 'signup' && Auth.isLoggedIn()) window.location.href = 'index.html';
